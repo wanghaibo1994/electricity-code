@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+   
+	<!-- 设置页面不登陆也可以访问 -->
+	<!-- 设置为/*.html 意思是只限制webApp根目录下的HTML文件,没有设置两个星,子目录不在其中 -->
+	<http pattern="/*.html" security="none"></http>
+	<http pattern="/css/**" security="none"></http>
+	<http pattern="/img/**" security="none"></http>
+	<http pattern="/js/**" security="none"></http>
+	<http pattern="/plugins/**" security="none"></http>
+
+	<!-- 页面的拦截规则    use-expressions:是否启动SPEL表达式 默认是true -->
+	<http use-expressions="false">
+		<!-- 当前用户必须有ROLE_USER的角色 才可以访问根目录及所属子目录的资源 -->
+		<intercept-url pattern="/**" access="ROLE_ADMIN"/>
+		<!-- 开启表单登陆功能 -->
+		<form-login  login-page="/login.html" default-target-url="/admin/index.html" authentication-failure-url="/login.html" always-use-default-target="true"/>
+		<!-- 开启运行跨域请求,禁用CSRF保护功能禁用 -->
+		<csrf disabled="true"/>
+		<!-- 开启支持现在用的框架,默认是屏蔽掉这个js的 -->
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
+		<!-- 开启默认退出的  url:/logout -->
+		<logout/>
+	</http>
+	
+	<!-- 认证管理器  直接指定账户-->
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="admin" password="123456" authorities="ROLE_ADMIN"/>
+				<user name="sunwukong" password="dasheng" authorities="ROLE_ADMIN"/>
+			</user-service>
+		</authentication-provider>	
+	</authentication-manager>
+		
+</beans:beans>
